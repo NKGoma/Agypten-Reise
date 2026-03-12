@@ -148,24 +148,23 @@
     .card-container {
       flex: 1;
       display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      padding: 20px 16px 100px; /* bottom padding for fixed nav */
-      overflow-x: hidden;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px 14px calc(82px + 12px); /* bottom = fixed nav height + gap */
+      overflow: hidden; /* no page-level scroll — body scrolls inside card */
     }
 
     .karteikarte {
       background: var(--card-bg);
       border-radius: 20px;
       box-shadow: 0 6px 28px var(--shadow);
-      padding: 28px 24px;
+      padding: 22px 20px;
       width: 100%;
       max-width: 580px;
+      flex: 1;           /* fill available height — no overflow outside card */
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 12px;
       /* Transition hook */
       transition: opacity 0.22s ease, transform 0.22s ease;
     }
@@ -214,6 +213,9 @@
       line-height: 1.75;
       color: var(--dark);
       white-space: pre-wrap;
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     /* ── DETAIL: Navigationsleiste (fixed bottom) ── */
