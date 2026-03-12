@@ -265,6 +265,51 @@
       text-shadow: 0 1px 2px rgba(0,0,0,0.2);
     }
 
+    /* ── Willkommenskarte ── */
+    .welcome-card {
+      background: #fff8ec;
+      border: 2px solid var(--sand);
+      border-radius: 16px;
+      padding: 18px 20px 16px;
+      margin: 14px 14px 4px;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .welcome-card h2 {
+      font-size: 1.15rem;
+      color: var(--terra);
+      margin-bottom: 6px;
+    }
+    .welcome-card p {
+      font-size: 0.88rem;
+      line-height: 1.55;
+      color: var(--dark);
+      margin-bottom: 8px;
+    }
+    .welcome-card blockquote {
+      font-style: italic;
+      color: var(--sand-dark);
+      border-left: 3px solid var(--sand);
+      padding-left: 10px;
+      margin: 8px 0 4px;
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+    .welcome-card .attrib {
+      font-size: 0.72rem;
+      color: var(--sand-dark);
+      margin-top: 2px;
+    }
+    .welcome-dismiss {
+      position: absolute;
+      top: 8px; right: 10px;
+      background: none; border: none;
+      font-size: 1.3rem; cursor: pointer;
+      color: var(--sand-dark);
+      line-height: 1;
+      padding: 4px 6px;
+    }
+
     /* ── Footer auf Startseite ── */
     .home-footer {
       text-align: center;
@@ -283,6 +328,15 @@
       <h1>🇪🇬 Ägypten Reiseführer</h1>
       <p>Tipps für eine unvergessliche Reise</p>
     </header>
+    <div class="welcome-card" id="welcome-card">
+      <button class="welcome-dismiss" id="welcome-dismiss" aria-label="Schließen">×</button>
+      <h2>Servus Werner, servus Maria! 🌞</h2>
+      <p>Wir — also Sophie &amp; Bene, Alisa &amp; Nori — wünschen euch eine unvergessliche Reise nach Ägypten! 12 Tage voller Geschichte, Wärme und Staunen liegen vor euch.</p>
+      <blockquote>„Man kommt nach Ägypten als Fremder — und kehrt zurück als ein Verwandelter."</blockquote>
+      <p class="attrib">— Georg Ebers, 1873, Ägyptologe und Professor an der Universität München.<br>Er entdeckte als erster Europäer das älteste Medizinbuch der Welt (den Ebers-Papyrus) in Luxor — und wäre danach am liebsten gar nicht mehr heimgefahren.</p>
+      <p><strong>Auf a guade Reise! 🏺</strong></p>
+    </div>
+
     <main id="category-grid" class="category-grid" role="list">
       <!-- JS füllt hier die Kacheln ein -->
     </main>
@@ -323,11 +377,11 @@
       cards: [
         {
           headline: 'Nur Flaschenwasser trinken',
-          body: 'Leitungswasser in Ägypten ist nicht zum Trinken geeignet — auch wenn es technisch behandelt ist. Kaufen Sie immer verschlossene Flaschen.\n\nIm Hotel und auf dem Kreuzfahrtschiff steht Ihnen Flaschenwasser zur Verfügung. Auch beim Zähneputzen besser Flaschenwasser benutzen.'
+          body: 'Leitungswasser in Ägypten ist nicht zum Trinken geeignet — auch wenn es technisch behandelt ist. Kauft immer verschlossene Flaschen.\n\nIm Hotel und auf dem Kreuzfahrtschiff steht euch Flaschenwasser zur Verfügung. Das Leitungswasser ist gechlort und zum Zähneputzen unbedenklich — nur zum Trinken bitte immer Flaschenwasser.'
         },
         {
           headline: 'Eiswürfel lieber ablehnen',
-          body: 'Eiswürfel werden oft aus Leitungswasser hergestellt. Bestellen Sie Getränke ohne Eis — auf Arabisch einfach sagen: „Bila talg" (gesprochen: Bi-la talg).\n\nFrisch gepresste Säfte in den Hotelrestaurants und im Bordrestaurant sind unbedenklich.'
+          body: 'Eiswürfel werden oft aus Leitungswasser hergestellt. Bestellt Getränke ohne Eis — auf Ägyptisch einfach sagen: „Bila talg" (gesprochen: Bi-la talg).\n\nFrisch gepresste Säfte in den Hotelrestaurants und im Bordrestaurant sind unbedenklich.'
         },
         {
           headline: 'Heiß gegartes ist sicher',
@@ -335,15 +389,15 @@
         },
         {
           headline: 'Den Magen schonen — am ersten Tag',
-          body: 'Geben Sie Ihrem Verdauungssystem einen Tag zum Ankommen. Am ersten Abend lieber leicht essen, kein rohes Obst ohne Schale.\n\nBananen und Orangen (selbst schälen) sind prima. Imodium und Elektrolytpulver (z.B. Elotrans) griffbereit halten — nur für den Fall.'
+          body: 'Gebt eurem Magen einen Tag zum Ankommen. Am ersten Abend lieber leicht essen, kein rohes Obst ohne Schale.\n\nBananen und Orangen (selbst schälen) sind prima. Imodium und Elektrolytpulver (z.B. Elotrans) griffbereit halten — nur für den Fall.'
         },
         {
-          headline: 'Was Sie unbedingt probieren sollten',
+          headline: 'Was ihr unbedingt probieren solltet',
           body: 'Ful Medames (gewürzte Favabohnenpaste) ist das ägyptische Nationalfrühstück — sicher, lecker, sättigend.\n\nHibiskus-Tee (Karkade) wird kalt und heiß serviert und ist herrlich erfrischend. Om Ali ist ein heißer Brotpudding mit Kokos und Nüssen — das ägyptische Nationaldessert. Alle drei lohnen sich sehr!'
         },
         {
-          headline: 'Alkohol und Ramadan',
-          body: 'In Ihren Hotelrestaurants und auf dem Kreuzfahrtschiff ist Alkohol erhältlich. In einfachen lokalen Cafés und in Moscheen-Nähe nicht.\n\nFalls Ihre Reise in den Ramadan fällt: Essen und Trinken tagsüber in der Öffentlichkeit bitte diskret handhaben. Die Abende im Ramadan sind dagegen festlich und lebendig.'
+          headline: 'Alkohol in Ägypten',
+          body: 'In euren Hotelrestaurants und auf dem Kreuzfahrtschiff ist Alkohol erhältlich. In einfachen lokalen Cafés und in Moscheen-Nähe nicht.\n\n'
         }
       ]
     },
@@ -354,12 +408,12 @@
       label: 'Nil-\nkreuzfahrt',
       cards: [
         {
-          headline: 'Das 5-Sterne-Schiff — Ihr schwimmendes Hotel',
-          body: 'Von der Einschiffung in Luxor bis Assuan sind Sie 4 Nächte an Bord. Das Schiff ist gleichzeitig Ihr Hotel, Transportmittel und Aussichtsplattform.\n\nVollpension ist inklusive. Genießen Sie die Mahlzeiten an Deck und beobachten Sie, wie das Nilufer an Ihnen vorbeizieht. Dieser Teil der Reise ist der ruhigste und vielleicht schönste.'
+          headline: 'Das 5-Sterne-Schiff — euer schwimmendes Hotel',
+          body: 'Von der Einschiffung in Luxor bis Assuan seid ihr 4 Nächte an Bord. Das Schiff ist gleichzeitig euer Hotel, Transportmittel und Aussichtsplattform.\n\nVollpension ist inklusive. Genießt die Mahlzeiten an Deck und beobachtet, wie das Nilufer an euch vorbeizieht. Dieser Teil der Reise ist der ruhigste und vielleicht schönste.'
         },
         {
           headline: 'Die Schleuse von Esna',
-          body: 'Die Schleuse von Esna ist ein technisches Bauwerk, das das Schiff mehrere Meter absenkt. Das Durchfahren der Schleuse ist ein Ereignis für sich — ringsum Händler, die vom Ufer aus Waren auf das Schiffsdeck werfen!\n\nStellen Sie sich auf dem Deck dazu: Es ist laut, bunt und lustig. Die Ware oben auffangen, Preis verhandeln, oder einfach staunen.'
+          body: 'Die Schleuse von Esna ist ein technisches Bauwerk, das das Schiff mehrere Meter absenkt. Das Durchfahren der Schleuse ist ein Ereignis für euch — ringsum Händler, die vom Ufer aus Waren auf das Schiffsdeck werfen!\n\nStellt euch auf dem Deck dazu: Es ist laut, bunt und lustig. Die Ware oben auffangen, Preis verhandeln, oder einfach staunen.'
         },
         {
           headline: 'Edfu: Der vollständigste Tempel Ägyptens',
@@ -371,15 +425,15 @@
         },
         {
           headline: 'Das Leben am Nilufer',
-          body: 'Vom Schiffsdeck aus sehen Sie ein unverändertes Ägypten: Bauern auf Eseln, Kinder die winken, Palmen, Felder die direkt ans Ufer stoßen, und dahinter die orangefarbene Wüste.\n\nDer Nilschlamm macht das schmale Uferband so fruchtbar, dass hier seit 7.000 Jahren ununterbrochen Menschen leben. Der beste Beobachtungsort: Deck mit einem Glas Tee.'
+          body: 'Vom Schiffsdeck aus seht ihr ein unverändertes Ägypten: Bauern auf Eseln, Kinder die winken, Palmen, Felder die direkt ans Ufer stoßen, und dahinter die orangefarbene Wüste.\n\nDer Nilschlamm macht das schmale Uferband so fruchtbar, dass hier seit 7.000 Jahren ununterbrochen Menschen leben. Der beste Beobachtungsort: Deck mit einem Glas Tee.'
         },
         {
           headline: 'Tipps für die Kreuzfahrt',
-          body: 'Kabine auf der richtigen Seite: Flussseite (nicht Wüstenseite) für den schönsten Ausblick — fragen Sie beim Einchiffen nach.\n\nTrinkgeld für die Crew am Ende: ca. 10–15 Euro pro Person und Nacht ist üblich und sehr willkommen. Sonnencreme und Hut für das Oberdeck sind Pflicht — auf dem Wasser wird die Sonne unterschätzt.'
+          body: 'Kabine auf der richtigen Seite: Flussseite (nicht Wüstenseite) für den schönsten Ausblick — fragt beim Einchiffen danach.\n\nTrinkgeld für die Crew am Ende: ca. 10–15 Euro pro Person und Nacht ist üblich und sehr willkommen. Sonnencreme und Hut für das Oberdeck sind Pflicht — auf dem Wasser wird die Sonne unterschätzt.'
         },
         {
           headline: 'Sonnenuntergang auf dem Nil',
-          body: 'Der Sonnenuntergang über dem Nil ist einer der schönsten Momente der gesamten Reise. Die Sonne taucht die Wüstenhügel in Orange und Rot, das Wasser glänzt golden.\n\nPlanen Sie keinen Ausflug für den späten Nachmittag, wenn das Schiff fährt — die Zeit auf dem Deck beim Sonnenuntergang ist unbezahlbar.'
+          body: 'Der Sonnenuntergang über dem Nil ist einer der schönsten Momente der gesamten Reise. Die Sonne taucht die Wüstenhügel in Orange und Rot, das Wasser glänzt golden.\n\nPlant keinen Ausflug für den späten Nachmittag, wenn das Schiff fährt — die Zeit auf dem Deck beim Sonnenuntergang ist unbezahlbar.'
         }
       ]
     },
@@ -391,19 +445,19 @@
       cards: [
         {
           headline: 'Die Währung: Ägyptisches Pfund',
-          body: 'Die Währung heißt Ägyptisches Pfund (EGP). 1 Euro = ungefähr 35–55 EGP (Kurs schwankt — bitte kurz vor der Reise prüfen).\n\nKleine Scheine (10, 20, 50 EGP) sind sehr praktisch für Bakschisch und kleine Einkäufe. Heben Sie am Flughafen oder im Hotel einen mittleren Betrag in kleinen Scheinen ab.'
+          body: 'Die Währung heißt Ägyptisches Pfund (EGP). 1 Euro = ungefähr 35–55 EGP (Kurs schwankt — bitte kurz vor der Reise prüfen).\n\nKleine Scheine (10, 20, 50 EGP) sind sehr praktisch für Bakschisch und kleine Einkäufe. Hebt am Flughafen oder im Hotel einen mittleren Betrag in kleinen Scheinen ab.'
         },
         {
           headline: 'Bakschisch — die Grundregel',
-          body: 'Bakschisch (Trinkgeld) ist in Ägypten ein fester Bestandteil des Alltags — kein Betteln, sondern gelebte Tradition.\n\nWer Ihnen einen besonderen Tempelraum aufschließt, Ihr Gepäck trägt, eine Tür aufhält oder die Toilette reinigt — all das wird mit einem kleinen Bakschisch honoriert. Bereiten Sie sich auf viele kleine Zahlungen vor.'
+          body: 'Bakschisch (Trinkgeld) ist in Ägypten ein fester Bestandteil des Alltags — kein Betteln, sondern gelebte Tradition.\n\nWer euch einen besonderen Tempelraum aufschließt, euer Gepäck trägt, eine Tür aufhält oder die Toilette reinigt — all das wird mit einem kleinen Bakschisch honoriert. Bereitet euch auf viele kleine Zahlungen vor.'
         },
         {
           headline: 'Wie viel Bakschisch?',
-          body: 'Toilettennutzung: 5–10 EGP\nGepäck tragen (pro Koffer): 20–50 EGP\nTempelwächter, der einen Raum öffnet: 20–50 EGP\nEinheimischer Führer (ganzer Tag): 200–300 EGP\nKreuzfahrtschiff-Crew: ca. 10–15 € pro Person und Nacht\n\nGroßzügig sein lohnt sich — Ihr Mehraufwand ist minimal, die Freude groß.'
+          body: 'Toilettennutzung: 5–10 EGP\nGepäck tragen (pro Koffer): 20–50 EGP\nTempelwächter, der einen Raum öffnet: 20–50 EGP\nEinheimischer Führer (ganzer Tag): 200–300 EGP\nKreuzfahrtschiff-Crew: ca. 10–15 € pro Person und Nacht\n\nGroßzügig sein lohnt euch — euer Mehraufwand ist minimal, die Freude groß.'
         },
         {
           headline: 'Im Khan el-Khalili: feilschen!',
-          body: 'Im berühmten Basar von Kairo sind die ersten Preise für Touristen gedacht — rechnen Sie mit dem 3–5-fachen des echten Wertes.\n\nFaustregel: Ein Drittel des Anfangspreises als erstes Angebot. Wenn der Händler nicht nachgibt, freundlich weggehen — in 8 von 10 Fällen folgt dann ein besserer Preis. Kleingeld separat bereithalten.'
+          body: 'Im berühmten Basar von Kairo sind die ersten Preise für Touristen gedacht — rechnet mit dem 3–5-fachen des echten Wertes.\n\nFaustregel: Ein Drittel des Anfangspreises als erstes Angebot. Wenn der Händler nicht nachgibt, freundlich weggehen — in 8 von 10 Fällen folgt dann ein besserer Preis. Kleingeld separat bereithalten.'
         },
         {
           headline: 'Kreditkarten und Bargeld',
@@ -459,15 +513,15 @@
         },
         {
           headline: 'Sonnenschutz — kein Spaß!',
-          body: 'Die ägyptische Sonne ist selbst im März stärker als die deutsche Hochsommersonne. Unterschätzen Sie sie bitte nicht.\n\nSonnencreme LSF 50+ für Gesicht und Arme. Sonnenbrille mit UV-Schutz — Pflicht! Ein breiter Sonnenhut. Zwischen 11 und 15 Uhr intensive Besichtigungen draußen möglichst vermeiden.'
+          body: 'Die ägyptische Sonne ist selbst im März stärker als die deutsche Hochsommersonne. unterschätzt sie bitte nicht.\n\nSonnencreme LSF 50+ für Gesicht und Arme. Sonnenbrille mit UV-Schutz — Pflicht! Ein breiter Sonnenhut. Zwischen 11 und 15 Uhr intensive Besichtigungen draußen möglichst vermeiden.'
         },
         {
           headline: 'Das richtige Schuhwerk',
-          body: 'Sie werden auf unebenen Steinböden, in Sand und durch enge Tempelgänge laufen — viel mehr als im Urlaub zuhause.\n\nBequeme, gut eingelaufene Wanderschuhe oder feste Ledersandalen mit Halt. Keine neuen, noch nicht eingelaufenen Schuhe! Für Moscheen leicht ausziehbare Schuhe sehr praktisch.'
+          body: 'Ihr werdet auf unebenen Steinböden, in Sand und durch enge Tempelgänge laufen — viel mehr als im Urlaub zuhause.\n\nBequeme, gut eingelaufene Wanderschuhe oder feste Ledersandalen mit Halt. Keine neuen, noch nicht eingelaufenen Schuhe! Für Moscheen leicht ausziehbare Schuhe sehr praktisch.'
         },
         {
           headline: 'Abu Simbel: morgens kalt!',
-          body: 'Der Touristen-Konvoi fährt oft um 4–5 Uhr morgens ab — zu dieser Zeit ist es in der Wüste noch empfindlich kalt.\n\nEine warme Jacke mitnehmen, die Sie nach Ankunft vor Ort ausziehen können. Tagsüber in Abu Simbel hingegen: heiß, wenig Schatten, unbedingt Wasser und Sonnenschutz dabei.'
+          body: 'Der Touristen-Konvoi fährt oft um 4–5 Uhr morgens ab — zu dieser Zeit ist es in der Wüste noch empfindlich kalt.\n\nEine warme Jacke mitnehmen, die ihr nach Ankunft vor Ort ausziehen könnt. Tagsüber in Abu Simbel hingegen: heiß, wenig Schatten, unbedingt Wasser und Sonnenschutz dabei.'
         }
       ]
     },
@@ -499,11 +553,11 @@
         },
         {
           headline: 'Das neue Grand Egyptian Museum (GEM)',
-          body: 'Das 2023 eröffnete Grand Egyptian Museum liegt direkt neben den Pyramiden und ist das größte archäologische Museum der Welt — klimatisiert, modern und spektakulär.\n\nTutanchamuns gesamte Sammlung (5.398 Objekte!) wird hier vollständig gezeigt. Planen Sie mindestens einen halben Tag ein. Das Schuhgeschäft der Pharaonen ist allein schon sehenswert.'
+          body: 'Das 2023 eröffnete Grand Egyptian Museum liegt direkt neben den Pyramiden und ist das größte archäologische Museum der Welt — klimatisiert, modern und spektakulär.\n\nTutanchamuns gesamte Sammlung (5.398 Objekte!) wird hier vollständig gezeigt. Plant mindestens einen halben Tag ein. Das Schuhgeschäft der Pharaonen ist allein schon sehenswert.'
         },
         {
           headline: 'Khan el-Khalili Basar',
-          body: 'Der älteste islamische Basar Kairos (seit 1382!) ist ein Labyrinth aus Gassen, Moscheen, Händlern und Cafés. Gehen Sie am Abend, wenn die Tageshitze nachlässt und die Lichter angehen.\n\nSetzen Sie sich im Café Fishawi auf einen Minztee — seit über 200 Jahren ununterbrochen geöffnet. Feilschen ist Pflicht und macht Spaß (siehe Tipps unter Geld & Trinkgeld).'
+          body: 'Der älteste islamische Basar Kairos (seit 1382!) ist ein Labyrinth aus Gassen, Moscheen, Händlern und Cafés. Geht am Abend, wenn die Tageshitze nachlässt und die Lichter angehen.\n\nSetzt euch im Café Fishawi auf einen Minztee — seit über 200 Jahren ununterbrochen geöffnet. Feilschen ist Pflicht und macht Spaß (siehe Tipps unter Geld & Trinkgeld).'
         }
       ]
     },
@@ -523,7 +577,7 @@
         },
         {
           headline: 'Tal der Könige — früh morgens',
-          body: 'Hier liegen über 60 Pharaonen begraben, darunter Tutanchamun und Ramses II. Das Standardticket erlaubt drei Gräber — Tutanchamuns Grab kostet extra, aber es lohnt sich.\n\nFotografieren im Innern ist verboten (wird kontrolliert). Früh morgens gehen — ab 10 Uhr wird es im Tal unerträglich heiß und voll. Wasser und Hut sind Pflicht.'
+          body: 'Hier liegen über 60 Pharaonen begraben, darunter Tutanchamun und Ramses II. Das Standardticket erlaubt drei Gräber — Tutanchamuns Grab kostet extra, aber es lohnt euch.\n\nFotografieren im Innern ist verboten (wird kontrolliert). Früh morgens gehen — ab 10 Uhr wird es im Tal unerträglich heiß und voll. Wasser und Hut sind Pflicht.'
         },
         {
           headline: 'Hatschepsut-Tempel: Die Pharaonin',
@@ -535,7 +589,7 @@
         },
         {
           headline: 'Heißluftballon — ein Lebenshighlight',
-          body: 'Start kurz vor Sonnenaufgang (ca. 5:30 Uhr), Flug ca. 45–60 Minuten über das Tal der Könige. Der Blick auf die goldene Wüste, den grünen Nil und die erwachende Stadt ist schlicht unbeschreiblich.\n\nPreis: ca. 80–120 USD. Fragen Sie Ihre Reiseleiterin Daniela — sie weiß, welcher Anbieter empfehlenswert ist. Warme Jacke für die Frühkälte mitbringen!'
+          body: 'Start kurz vor Sonnenaufgang (ca. 5:30 Uhr), Flug ca. 45–60 Minuten über das Tal der Könige. Der Blick auf die goldene Wüste, den grünen Nil und die erwachende Stadt ist schlicht unbeschreiblich.\n\nPreis: ca. 80–120 USD. Fragt eure Reiseleiterin Daniela — sie weiß, welcher Anbieter empfehlenswert ist. Warme Jacke für die Frühkälte mitbringen!'
         }
       ]
     },
@@ -574,12 +628,12 @@
       label: 'Abu\nSimbel',
       cards: [
         {
-          headline: 'Was Sie erwartet',
+          headline: 'Was euch erwartet',
           body: 'Die zwei Felstempel Ramses\' II. (erbaut ca. 1264 v. Chr.) sind eines der beeindruckendsten Bauwerke der Menschheit. Vier sitzende Kolossal-Statuen (über 20 Meter hoch) bewachen den Eingang.\n\nIm Inneren sind die Wandmalereien nach über 3.200 Jahren noch leuchtend bunt. Ein UNESCO-Weltkulturerbe der Sonderklasse.'
         },
         {
           headline: 'Anreise: Konvoi-Bus von Assuan',
-          body: 'Der offizielle Touristenkonvoi fährt täglich sehr früh von Assuan ab — meist um 4:00 oder 5:00 Uhr morgens (Abfahrtszeit saisonal prüfen). Ca. 3 Stunden Fahrt durch die Wüste.\n\nAnkunft früh morgens, 2–3 Stunden für die Tempel einplanen, Rückfahrt mit dem Konvoi. Sehr früh aufstehen — aber es lohnt sich.'
+          body: 'Der offizielle Touristenkonvoi fährt täglich sehr früh von Assuan ab — meist um 4:00 oder 5:00 Uhr morgens (Abfahrtszeit saisonal prüfen). Ca. 3 Stunden Fahrt durch die Wüste.\n\nAnkunft früh morgens, 2–3 Stunden für die Tempel einplanen, Rückfahrt mit dem Konvoi. Sehr früh aufstehen — aber es lohnt euch.'
         },
         {
           headline: 'Anreise: Kurzflug',
@@ -595,7 +649,7 @@
         },
         {
           headline: 'Praktisches vor Ort',
-          body: 'In Abu Simbel gibt es wenig: ein Hotel, einige kleine Cafés, den Tempel und den Nassersee.\n\nBringen Sie ausreichend Wasser, Snacks, Sonnencreme und einen Hut mit. Die Hitze ist stark, auch morgens. Nutzen Sie die früheren Stunden (8–10 Uhr) für die Besichtigung, bevor die Sonne hochsteht.'
+          body: 'In Abu Simbel gibt es wenig: ein Hotel, einige kleine Cafés, den Tempel und den Nassersee.\n\nBringt ausreichend Wasser, Snacks, Sonnencreme und einen Hut mit. Die Hitze ist stark, auch morgens. Nutzt die früheren Stunden (8–10 Uhr) für die Besichtigung, bevor die Sonne hochsteht.'
         }
       ]
     },
@@ -623,11 +677,11 @@
         },
         {
           headline: 'Das Pauluskloster',
-          body: 'Nur wenige Kilometer vom Antoniuskloster entfernt liegt das Pauluskloster, das die Gebeine des hl. Paulus von Theben beherbergt — eines der ersten Einsiedler der Christengeschichte.\n\nDie Anlage ist kleiner und stiller als das Antoniuskloster. Die beiden Klöster besucht man sinnvoll an einem Tag — Ihre Reiseleiterin plant das so.'
+          body: 'Nur wenige Kilometer vom Antoniuskloster entfernt liegt das Pauluskloster, das die Gebeine des hl. Paulus von Theben beherbergt — eines der ersten Einsiedler der Christengeschichte.\n\nDie Anlage ist kleiner und stiller als das Antoniuskloster. Die beiden Klöster besucht man sinnvoll an einem Tag — eure Reiseleiterin plant das so.'
         },
         {
           headline: 'Koptische Kunst und ihre Symbole',
-          body: 'Koptische Kunst ist einzigartig: Sie verbindet altägyptische Motive (das Anch-Kreuz wurde zum christlichen Kreuz) mit frühchristlicher Symbolik und byzantinischen Einflüssen.\n\nDas koptische Kreuz mit seinen vier gleich langen Armen und den runden Enden symbolisiert das Leben. In den Klöstern und Kirchen finden Sie ikonographische Malereien von stiller, eindringlicher Schönheit.'
+          body: 'Koptische Kunst ist einzigartig: Sie verbindet altägyptische Motive (das Anch-Kreuz wurde zum christlichen Kreuz) mit frühchristlicher Symbolik und byzantinischen Einflüssen.\n\nDas koptische Kreuz mit seinen vier gleich langen Armen und den runden Enden symbolisiert das Leben. In den Klöstern und Kirchen findet ihr ikonographische Malereien von stiller, eindringlicher Schönheit.'
         }
       ]
     },
@@ -643,7 +697,7 @@
         },
         {
           headline: 'Hitze und Dehydration',
-          body: 'Dehydration ist die häufigste Gefahr für Reisende in Ägypten. Trinken Sie täglich mindestens 2–3 Liter Flaschenwasser, auch wenn Sie keinen Durst spüren.\n\nSchwindel, Kopfschmerzen oder plötzliche Müdigkeit? Sofort in den Schatten, hinsetzen und viel Wasser mit Elektrolyten trinken. Im Zweifel eine Pause einlegen — Tempel laufen nicht weg.'
+          body: 'Dehydration ist die häufigste Gefahr für Reisende in Ägypten. Trinkt täglich mindestens 2–3 Liter Flaschenwasser, auch wenn ihr keinen Durst spürt.\n\nSchwindel, Kopfschmerzen oder plötzliche Müdigkeit? Sofort in den Schatten, hinsetzen und viel Wasser mit Elektrolyten trinken. Im Zweifel eine Pause einlegen — Tempel laufen nicht weg.'
         },
         {
           headline: 'Magenprobleme — was tun?',
@@ -659,7 +713,39 @@
         },
         {
           headline: 'Apotheken vor Ort',
-          body: 'Ägyptische Apotheken (erkennbar am grünen Kreuz) sind gut bestückt und die Apotheker oft hilfsbereit — viele sprechen Englisch.\n\nViele europäische Medikamente sind erhältlich, oft günstiger und ohne Rezept. Trotzdem: Nehmen Sie Ihre wichtigsten persönlichen Medikamente aus Deutschland in ausreichender Menge mit — Zeitdruck oder Sprachbarriere kann im Notfall stressig sein.'
+          body: 'Ägyptische Apotheken (erkennbar am grünen Kreuz) sind gut bestückt und die Apotheker oft hilfsbereit — viele sprechen Englisch.\n\nViele europäische Medikamente sind erhältlich, oft günstiger und ohne Rezept. Trotzdem: Nehmt eure wichtigsten persönlichen Medikamente aus Deutschland in ausreichender Menge mit — Zeitdruck oder Sprachbarriere kann im Notfall stressig sein.'
+        }
+      ]
+    },
+
+    {
+      id: 'aegyptisch',
+      emoji: '🗣️',
+      label: 'Auf\nÄgyptisch',
+      cards: [
+        {
+          headline: 'Ägyptisch — nicht Arabisch!',
+          body: 'Das Ägyptische (Masri) ist ein eigener Dialekt, den 100 Millionen Menschen sprechen — und er klingt ganz anders als das Arabisch aus dem Schulbuch.\n\nDie gute Nachricht: Die Ägypter freuen sich riesig, wenn ihr auch nur drei Wörter versucht. Ein Lächeln und „Shukran" öffnet jedes Herz. Keine Angst vor Fehlern — hier zählt der Versuch.'
+        },
+        {
+          headline: 'Ahlan! — Hallo und Willkommen',
+          body: '„Ahlan wa sahlan!" (AH-lan wa SAH-lan) = Herzlich willkommen!\nAntwort: „Ahlan bik!" (an Mann) / „Ahlan biki!" (an Frau)\n\n„Ezayak?" (e-SAI-ak) = Wie geht\'s? (an Mann)\n„Ezayik?" (e-SAI-ik) = Wie geht\'s? (an Frau)\nAntwort: „Tamam, shukran!" = Gut, danke!'
+        },
+        {
+          headline: 'Shukran & La shokran — die Wichtigsten',
+          body: '„Shukran" (SCHUK-ran) = Danke schön\n„La shokran" (la SCHOK-ran) = Nein danke\n\n„La shokran" ist das wichtigste Wort auf dem Basar. Ruhig sagen, lächeln, weitergehen — das ist die beste Reaktion auf aufdringliche Händler. Wer das kann, kommt gut durch jede Gasse im Khan el-Khalili.'
+        },
+        {
+          headline: 'Khalas ya habibi!',
+          body: '„Khalas" (CHA-las) = Fertig / Genug / Das war\'s\n„Ya habibi" (ja ha-BI-bi) = Mein Freund (herzlich, nicht romantisch)\n\n„Khalas ya habibi" zusammen = Das reicht jetzt, Freundchen — mit Lächeln gesagt ist das der wirksamste Weg, eine aufdringliche Verhandlung zu beenden. Sehr beliebt bei Einheimischen. Wirkt Wunder.'
+        },
+        {
+          headline: 'Yalla & Inshallah — jeden Tag 100x',
+          body: '„Yalla!" (JAL-la) = Los! / Komm! / Beeil dich!\nIhr werdet das Wort überall hören — vom Busfahrer, vom Guide, vom Kellner.\n\n„Inshallah" (IN-schaa-lah) = So Gott will / Hoffentlich\nIn Ägypten bedeutet es alles von „sicher" bis „wahrscheinlich nicht". Wenn der Fahrer sagt „der Bus kommt Inshallah um 8 Uhr" — plant Puffer ein. Mit Humor nehmen!'
+        },
+        {
+          headline: 'Bikam? & Ghali awi! — auf dem Markt',
+          body: '„Bikam?" (bi-KAM?) = Wie viel kostet das?\n„Ghali awi!" (GHA-li a-WI!) = Das ist viel zu teuer!\n„Arkhas shwaya" (AR-chas SCHWA-ja) = Ein bisschen billiger, bitte\n\nDiese drei Sätze sind euer Feilsch-Werkzeugkasten. Auf Ägyptisch zu feilschen macht dem Händler mehr Spaß — und euch auch. Probiert\'s aus!'
         }
       ]
     }
@@ -872,6 +958,14 @@
   // ════════════════════════════════════════════════════════════
 
   renderHome();
+
+  // Willkommenskarte schließen
+  var welcomeDismiss = document.getElementById('welcome-dismiss');
+  if (welcomeDismiss) {
+    welcomeDismiss.addEventListener('click', function() {
+      document.getElementById('welcome-card').style.display = 'none';
+    });
+  }
 
   </script>
 </body>
