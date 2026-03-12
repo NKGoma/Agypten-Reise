@@ -45,7 +45,7 @@
     .app-header {
       background: linear-gradient(135deg, #c8a96e 0%, #a8894e 100%);
       color: #fff;
-      padding: 28px 20px 22px;
+      padding: 16px 20px 14px;
       text-align: center;
       box-shadow: 0 3px 10px var(--shadow);
     }
@@ -302,22 +302,65 @@
     }
     .welcome-dismiss {
       position: absolute;
-      top: 8px; right: 10px;
+      top: 4px; right: 4px;
       background: none; border: none;
-      font-size: 1.3rem; cursor: pointer;
+      font-size: 1.5rem; cursor: pointer;
       color: var(--sand-dark);
-      line-height: 1;
-      padding: 4px 6px;
+      width: 44px; height: 44px;
+      display: flex; align-items: center; justify-content: center;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    /* ── Footer auf Startseite ── */
-    .home-footer {
-      text-align: center;
-      padding: 12px 16px 20px;
-      font-size: 0.82rem;
+    /* ── Kachel-Tipps-Zähler ── */
+    .tile-count {
+      font-size: 0.72rem;
+      font-weight: bold;
       color: var(--sand-dark);
-      font-style: italic;
+      background: var(--bg);
+      border-radius: 20px;
+      padding: 2px 8px;
+      margin-top: 2px;
     }
+
+    /* ── Punkt-Indikatoren in der Navigationsleiste ── */
+    .nav-dots {
+      display: flex;
+      gap: 7px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      max-width: 180px;
+    }
+    .nav-dot {
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.35);
+      flex-shrink: 0;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .nav-dot.active {
+      background: #fff;
+      transform: scale(1.25);
+    }
+
+    /* ── Wisch-Hinweis ── */
+    .swipe-hint {
+      position: fixed;
+      bottom: 96px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(44, 26, 14, 0.72);
+      color: #fff;
+      border-radius: 20px;
+      padding: 6px 18px;
+      font-size: 0.82rem;
+      pointer-events: none;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.4s;
+      z-index: 200;
+    }
+    .swipe-hint.visible { opacity: 1; }
   </style>
 </head>
 <body>
@@ -340,7 +383,6 @@
     <main id="category-grid" class="category-grid" role="list">
       <!-- JS füllt hier die Kacheln ein -->
     </main>
-    <footer class="home-footer">Auf eine schöne Reise! 🌙</footer>
   </div>
 
   <!-- ═══════════════════════════════════════════ VIEW 2: KARTEIKASTEN -->
@@ -356,9 +398,10 @@
         <p class="card-body" id="card-body"></p>
       </div>
     </div>
+    <div class="swipe-hint" id="swipe-hint">← Wischen →</div>
     <nav class="card-nav" aria-label="Karten blättern">
       <button id="btn-prev" class="nav-btn" aria-label="Vorheriger Tipp">&#8592;</button>
-      <span id="progress-label" aria-live="polite"></span>
+      <div id="progress-label" aria-live="polite"><div class="nav-dots" id="nav-dots"></div></div>
       <button id="btn-next" class="nav-btn" aria-label="Nächster Tipp">&#8594;</button>
     </nav>
   </div>
@@ -776,11 +819,12 @@
   const cardNumber     = document.getElementById('card-number');
   const cardHeadline   = document.getElementById('card-headline');
   const cardBody       = document.getElementById('card-body');
-  const progressLabel  = document.getElementById('progress-label');
+  const navDots        = document.getElementById('nav-dots');
   const btnBack        = document.getElementById('btn-back');
   const btnPrev        = document.getElementById('btn-prev');
   const btnNext        = document.getElementById('btn-next');
   const cardContainer  = document.getElementById('card-container');
+  const swipeHint      = document.getElementById('swipe-hint');
 
   // ════════════════════════════════════════════════════════════
   //  VIEWS WECHSELN
@@ -821,8 +865,14 @@
       labelEl.textContent = cat.label.replace('\n', '\n');
       labelEl.style.whiteSpace = 'pre-line';
 
+      const countEl = document.createElement('span');
+      countEl.className = 'tile-count';
+      countEl.setAttribute('aria-hidden', 'true');
+      countEl.textContent = cat.cards.length + ' Tipps';
+
       tile.appendChild(emojiEl);
       tile.appendChild(labelEl);
+      tile.appendChild(countEl);
 
       tile.addEventListener('click', function() { navigateTo(idx); });
       tile.addEventListener('keydown', function(e) {
@@ -847,10 +897,27 @@
     cardNumber.textContent   = idx + 1;
     cardHeadline.textContent = tip.headline;
     cardBody.textContent     = tip.body;
-    progressLabel.textContent = 'Tipp ' + (idx + 1) + ' von ' + total;
+    renderDots(total, idx);
 
     btnPrev.disabled = (idx === 0);
     btnNext.disabled = (idx === total - 1);
+  }
+
+  function renderDots(total, current) {
+    navDots.innerHTML = '';
+    if (total > 10) {
+      // Fall back to text for very long decks
+      var txt = document.createElement('span');
+      txt.style.cssText = 'font-size:1rem;font-weight:bold;color:#fff;';
+      txt.textContent = (current + 1) + ' / ' + total;
+      navDots.appendChild(txt);
+      return;
+    }
+    for (var i = 0; i < total; i++) {
+      var dot = document.createElement('span');
+      dot.className = 'nav-dot' + (i === current ? ' active' : '');
+      navDots.appendChild(dot);
+    }
   }
 
   // ════════════════════════════════════════════════════════════
@@ -867,6 +934,12 @@
     card.style.transform = 'none';
     card.style.transition = '';
     btnBack.focus();
+    // Wisch-Hinweis auf Touch-Geräten einblenden
+    var cat = CATEGORIES[categoryIdx];
+    if ('ontouchstart' in window && cat.cards.length > 1) {
+      swipeHint.classList.add('visible');
+      setTimeout(function() { swipeHint.classList.remove('visible'); }, 1500);
+    }
   }
 
   function navigateHome() {
