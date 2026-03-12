@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="theme-color" content="#c8a96e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>🇪🇬 Ägypten Reiseführer</title>
+  <style>
+    /* ── Farben & Grundeinstellungen ── */
+    :root {
+      --bg:         #f5e6c8;
+      --sand:       #c8a96e;
+      --sand-dark:  #a8894e;
+      --terra:      #b85c2a;
+      --terra-dark: #8f4420;
+      --dark:       #2c1a0e;
+      --card-bg:    #ffffff;
+      --shadow:     rgba(44, 26, 14, 0.15);
+      --disabled:   #c0b09a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--dark);
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 18px;
+      -webkit-text-size-adjust: 100%;
+      overflow-x: hidden;
+    }
+
+    /* ── Views ── */
+    .view {
+      display: none;
+      flex-direction: column;
+      min-height: 100dvh;
+      min-height: 100vh;
+    }
+    .view.active { display: flex; }
+
+    /* ── HOME: Header ── */
+    .app-header {
+      background: linear-gradient(135deg, #c8a96e 0%, #a8894e 100%);
+      color: #fff;
+      padding: 28px 20px 22px;
+      text-align: center;
+      box-shadow: 0 3px 10px var(--shadow);
+    }
+    .app-header h1 {
+      font-size: 1.9rem;
+      font-weight: bold;
+      letter-spacing: 0.02em;
+      line-height: 1.2;
+    }
+    .app-header p {
+      font-size: 1rem;
+      margin-top: 6px;
+      opacity: 0.9;
+      font-style: italic;
+    }
+
+    /* ── HOME: Kategorie-Raster ── */
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      padding: 16px;
+      flex: 1;
+    }
+
+    @media (max-width: 340px) {
+      .category-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .category-tile {
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: 0 4px 12px var(--shadow);
+      min-height: 100px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+      padding: 12px 8px;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .category-tile:active {
+      transform: scale(0.94);
+      border-color: var(--sand);
+      box-shadow: 0 2px 6px var(--shadow);
+    }
+    .tile-emoji {
+      font-size: 2.2rem;
+      line-height: 1;
+    }
+    .tile-label {
+      font-size: 0.78rem;
+      font-weight: bold;
+      text-align: center;
+      line-height: 1.3;
+      color: var(--dark);
+    }
+
+    /* ── DETAIL: Header ── */
+    .detail-header {
+      background: linear-gradient(135deg, #c8a96e 0%, #a8894e 100%);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 3px 10px var(--shadow);
+      min-height: 68px;
+    }
+    #btn-back {
+      background: rgba(255,255,255,0.25);
+      color: #fff;
+      border: 2px solid rgba(255,255,255,0.5);
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-size: 1rem;
+      font-family: Georgia, serif;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.15s;
+    }
+    #btn-back:active { background: rgba(255,255,255,0.4); }
+
+    #detail-title {
+      color: #fff;
+      font-size: 1.15rem;
+      font-weight: bold;
+      line-height: 1.25;
+      flex: 1;
+    }
+
+    /* ── DETAIL: Karteikarte ── */
+    .card-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 16px 100px; /* bottom padding for fixed nav */
+      overflow: hidden;
+    }
+
+    .karteikarte {
+      background: var(--card-bg);
+      border-radius: 20px;
+      box-shadow: 0 6px 28px var(--shadow);
+      padding: 28px 24px;
+      width: 100%;
+      max-width: 580px;
+      min-height: 300px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      /* Transition hook */
+      transition: opacity 0.22s ease, transform 0.22s ease;
+    }
+
+    .karteikarte.slide-out-left {
+      opacity: 0;
+      transform: translateX(-55px);
+    }
+    .karteikarte.slide-out-right {
+      opacity: 0;
+      transform: translateX(55px);
+    }
+    .karteikarte.slide-in-left {
+      opacity: 0;
+      transform: translateX(-55px);
+      transition: none;
+    }
+    .karteikarte.slide-in-right {
+      opacity: 0;
+      transform: translateX(55px);
+      transition: none;
+    }
+
+    .card-number {
+      display: inline-block;
+      background: var(--sand);
+      color: #fff;
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      font-size: 1.05rem;
+      font-weight: bold;
+      line-height: 38px;
+      text-align: center;
+      flex-shrink: 0;
+      align-self: flex-start;
+    }
+    .card-headline {
+      font-size: 1.35rem;
+      font-weight: bold;
+      line-height: 1.35;
+      color: var(--terra);
+    }
+    .card-body {
+      font-size: 1.08rem;
+      line-height: 1.75;
+      color: var(--dark);
+      white-space: pre-wrap;
+    }
+
+    /* ── DETAIL: Navigationsleiste (fixed bottom) ── */
+    .card-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 82px;
+      background: var(--sand);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      box-shadow: 0 -3px 12px var(--shadow);
+      z-index: 100;
+    }
+
+    .nav-btn {
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      background: var(--terra);
+      color: #fff;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.15s, transform 0.1s;
+      font-family: Georgia, serif;
+    }
+    .nav-btn:active:not(:disabled) {
+      background: var(--terra-dark);
+      transform: scale(0.93);
+    }
+    .nav-btn:disabled {
+      background: var(--disabled);
+      cursor: default;
+    }
+
+    #progress-label {
+      font-size: 1.05rem;
+      font-weight: bold;
+      color: #fff;
+      text-align: center;
+      line-height: 1.3;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+
+    /* ── Footer auf Startseite ── */
+    .home-footer {
+      text-align: center;
+      padding: 12px 16px 20px;
+      font-size: 0.82rem;
+      color: var(--sand-dark);
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════ VIEW 1: STARTSEITE -->
+  <div id="view-home" class="view active">
+    <header class="app-header">
+      <h1>🇪🇬 Ägypten Reiseführer</h1>
+      <p>Tipps für eine unvergessliche Reise</p>
+    </header>
+    <main id="category-grid" class="category-grid" role="list">
+      <!-- JS füllt hier die Kacheln ein -->
+    </main>
+    <footer class="home-footer">Auf eine schöne Reise! 🌙</footer>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ VIEW 2: KARTEIKASTEN -->
+  <div id="view-detail" class="view" role="region" aria-label="Tipps">
+    <header class="detail-header">
+      <button id="btn-back" aria-label="Zurück zur Übersicht">← Zurück</button>
+      <h2 id="detail-title"></h2>
+    </header>
+    <div class="card-container" id="card-container">
+      <div id="card" class="karteikarte" role="article">
+        <span class="card-number" id="card-number" aria-hidden="true"></span>
+        <h3 class="card-headline" id="card-headline"></h3>
+        <p class="card-body" id="card-body"></p>
+      </div>
+    </div>
+    <nav class="card-nav" aria-label="Karten blättern">
+      <button id="btn-prev" class="nav-btn" aria-label="Vorheriger Tipp">&#8592;</button>
+      <span id="progress-label" aria-live="polite"></span>
+      <button id="btn-next" class="nav-btn" aria-label="Nächster Tipp">&#8594;</button>
+    </nav>
+  </div>
+
+  <script>
+  // ════════════════════════════════════════════════════════════
+  //  INHALT — 11 Kategorien mit Karteikarten auf Deutsch
+  // ════════════════════════════════════════════════════════════
+
+  const CATEGORIES = [
+
+    {
+      id: 'wasser',
+      emoji: '💧',
+      label: 'Wasser\n& Essen',
+      cards: [
+        {
+          headline: 'Nur Flaschenwasser trinken',
+          body: 'Leitungswasser in Ägypten ist nicht zum Trinken geeignet — auch wenn es technisch behandelt ist. Kaufen Sie immer verschlossene Flaschen (die 1,5-Liter-Flaschen aus dem Supermarkt sind günstig und überall erhältlich).\n\nAuch beim Zähneputzen besser Flaschenwasser benutzen.'
+        },
+        {
+          headline: 'Eiswürfel lieber ablehnen',
+          body: 'Eiswürfel werden oft aus Leitungswasser hergestellt. Bestellen Sie Getränke ohne Eis: auf Arabisch „Bila talg" (بلا تلج).\n\nFrisch gepresste Säfte in Touristenrestaurants sind meistens unbedenklich — wenn Sie sehen, wie sie direkt vor Ihnen gepresst werden.'
+        },
+        {
+          headline: 'Heiß gegartes bevorzugen',
+          body: 'Durchgegartes, dampfend heißes Essen ist am sichersten. Rohes Gemüse und Salate in einfachen Lokalen lieber weglassen.\n\nKoshary (Nudeln, Reis, Linsen, Tomatensoße) ist das ägyptische Nationalgericht — preiswert, lecker und absolut sicher. Unbedingt probieren!'
+        },
+        {
+          headline: 'Straßenessen — mit Bedacht',
+          body: 'Ful Medames (Favabohnenpaste), frisch gebratene Falafel und frisches Fladenbrot sind in der Regel sicher und sehr lecker.\n\nSchauen Sie, ob die Zubereitung frisch und heiß passiert und ob viele Einheimische dort essen — das ist ein gutes Zeichen.'
+        },
+        {
+          headline: 'Den Magen schonen — am ersten Tag',
+          body: 'Geben Sie Ihrem Verdauungssystem einen Tag zum Ankommen. Am ersten Tag lieber leicht essen, kein rohes Obst ohne Schale.\n\nBananen und Orangen (selbst schälen) sind prima. Imodium, Kohletabletten und Elektrolytpulver (z.B. Elotrans) immer griffbereit halten — nur für den Fall.'
+        },
+        {
+          headline: 'Alkohol in Ägypten',
+          body: 'Alkohol ist erhältlich, aber nicht überall. In Touristenhotels und bestimmten Restaurants gibt es Bier und Wein — in normalen lokalen Cafés und Restaurants nicht.\n\nDas ägyptische Bier heißt Stella (passabel), der Wein ist trinkbar. In frommen Vierteln und Moscheen-Nähe keinen Alkohol trinken.'
+        }
+      ]
+    },
+
+    {
+      id: 'feilschen',
+      emoji: '🛍️',
+      label: 'Feilschen\nauf dem Basar',
+      cards: [
+        {
+          headline: 'Feilschen ist Pflicht — kein Streit',
+          body: 'Im Khan el-Khalili und auf jedem ägyptischen Markt wird Handeln erwartet. Es ist kein Konflikt, sondern ein geselliges Spiel. Kein Händler ist beleidigt, wenn Sie einen niedrigeren Preis nennen — wer nicht feilscht, zahlt einfach zu viel.'
+        },
+        {
+          headline: 'Der erste Preis ist Fantasie',
+          body: 'Der Anfangspreis kann das 3- bis 5-Fache des tatsächlichen Wertes betragen.\n\nFaustregel: Bieten Sie zunächst etwa 30–40 % des genannten Preises. Dann trifft man sich irgendwo in der Mitte. Beispiel: Händler ruft 300 EGP — Sie bieten 90 EGP, einigen sich auf 130–150 EGP.'
+        },
+        {
+          headline: 'Der Trick: einfach weggehen',
+          body: 'Wenn sich der Händler nicht bewegt, lächeln Sie freundlich, sagen „La shukran" (Nein danke) und gehen los.\n\nIn 8 von 10 Fällen werden Sie zurückgerufen — und dann ist plötzlich ein deutlich günstigerer Preis möglich. Das ist Teil des Spiels, kein Nachgeben.'
+        },
+        {
+          headline: 'Nie zu begeistert wirken',
+          body: 'Sobald Sie zeigen, dass Sie „dieses eine Ding unbedingt haben müssen", steigt der Preis sofort.\n\nRuhig bleiben, mehrere Waren anschauen, nicht zu lange bei einem Stück verweilen. Das gibt Ihnen die Verhandlungsmacht zurück.'
+        },
+        {
+          headline: 'Kleingeld ist Gold wert',
+          body: 'Zahlen Sie möglichst genau den ausgehandelten Betrag. Wenn Sie für einen 80-EGP-Kauf einen 200-EGP-Schein herausholen, ist Wechselgeld plötzlich „leider nicht vorhanden".\n\nHalten Sie kleine Scheine (10, 20, 50 EGP) separat in einer Hosentasche bereit.'
+        },
+        {
+          headline: 'Tee annehmen — mit Bedacht',
+          body: '„Nur schauen, kein kaufen" ist erlaubt. Aber sobald Sie Tee annehmen und länger bleiben, steigt der soziale Druck zu kaufen erheblich.\n\nNehmen Sie Tee nur an, wenn Sie wirklich ernsthaft interessiert sind. Andernfalls freundlich lächeln und weitergehen.'
+        },
+        {
+          headline: 'Was lohnt sich zu kaufen?',
+          body: 'Empfehlenswert: Alabasterfiguren (echter Alabaster ist kühl und schwer), Papyrus (echter biegt sich, reißt nicht), Gewürze (Kümmel, Hibiskus, Kurkuma), Lederarbeiten, Galabiyyas (traditionelle Gewänder).\n\nVorsicht: Parfumläden sind oft aggressiv mit Hochdruckverkauf.'
+        }
+      ]
+    },
+
+    {
+      id: 'geld',
+      emoji: '💰',
+      label: 'Geld\n& Trinkgeld',
+      cards: [
+        {
+          headline: 'Die Währung: Ägyptisches Pfund',
+          body: 'Die Währung heißt Ägyptisches Pfund (EGP, arabisch: Gineh). 1 Euro = ungefähr 35–38 EGP (Stand Anfang 2025 — bitte kurz vor der Reise prüfen, da der Kurs schwankt).\n\nScheine: 5, 10, 20, 50, 100, 200, 500 EGP. Viele kleine Scheine sind praktischer als wenige große.'
+        },
+        {
+          headline: 'Wo Geld wechseln oder abheben?',
+          body: 'Geldautomaten (ATMs) in touristischen Bereichen funktionieren zuverlässig — in Kairo, Luxor und Assuan gut zu finden.\n\nGeldwechsel am besten an offiziellen Bankschaltern oder lizenzierten Wechselstuben. Geldwechsel auf der Straße ist illegal und birgt Betrugsrisiko.'
+        },
+        {
+          headline: 'Bakschisch — die Grundregel',
+          body: 'Bakschisch (Trinkgeld) ist in Ägypten ein fester Bestandteil des Alltags. Hotelträger, Toilettenwächter, Tempelwächter, die Ihnen einen besonderen Raum aufschließen — alle erwarten ein kleines Trinkgeld.\n\nBereiten Sie sich auf viele kleine Zahlungen vor und halten Sie immer Münzen und kleine Scheine parat.'
+        },
+        {
+          headline: 'Wie viel Bakschisch?',
+          body: 'Toilettennutzung: 5–10 EGP\nHotelgepäck tragen: 20–50 EGP pro Koffer\nTempelwächter, der extra öffnet: 20–50 EGP\nReiseguide (ganzer Tag): 150–250 EGP\nFelucca-Bootsführer (1 Std.): 50–100 EGP\nTaxi-/Fahrer (ganzer Tag): 100–150 EGP\n\nLieber etwas großzügig — der Unterschied für Sie ist minimal, die Freude groß.'
+        },
+        {
+          headline: 'Kreditkarten — wann, wo?',
+          body: 'In großen Hotels, Touristenrestaurants und Souvenirshops in Einkaufszentren werden Kreditkarten akzeptiert.\n\nAuf Märkten, in kleinen Lokalen, für Bakschisch und bei privaten Anbietern: immer Bargeld. Heben Sie ausreichend EGP in kleinen Scheinen ab, bevor Sie in Bazarviertel oder aufs Land fahren.'
+        },
+        {
+          headline: 'Preis immer vorher vereinbaren!',
+          body: 'Bei Taxis, Felucca-Fahrten, Kamelritten und privaten Touren: Einigen Sie sich auf einen festen Preis BEVOR Sie einsteigen oder starten.\n\nNach Abschluss wird der Preis gerne „missverstanden" oder neu verhandelt. Ein kurzes, freundliches Einigen im Voraus erspart viel Ärger.'
+        }
+      ]
+    },
+
+    {
+      id: 'transport',
+      emoji: '🚕',
+      label: 'Fort-\nbewegung',
+      cards: [
+        {
+          headline: 'Uber in Kairo — die stressfreie Wahl',
+          body: 'Uber funktioniert in Kairo hervorragend: fester Preis, GPS-Nachverfolgung, keine Preisverhandlung. Die App auf dem Handy installieren und entweder eine lokale SIM-Karte kaufen oder das Hotel-WLAN nutzen.\n\nDeutlich günstiger als in Deutschland und deutlich stressfreier als normale Taxis.'
+        },
+        {
+          headline: 'Normale Taxis — Preis vorher!',
+          body: 'Weiße Taxis in Kairo und anderen Städten haben oft kein funktionierendes Taxameter. Vereinbaren Sie den Preis, bevor Sie einsteigen.\n\nFaustregel Kairo: kurze Strecken 30–80 EGP. Immer von draußen verhandeln, dann erst einsteigen. Taxis, die Sie aktiv ansprechen, verlangen oft mehr.'
+        },
+        {
+          headline: 'Reisen zwischen den Städten',
+          body: 'Der Nachtzug Kairo–Luxor–Assuan ist ein klassisches Erlebnis (1. Klasse / Schlafwagen buchen). Tickets am besten über das Hotel oder eine Agentur.\n\nAlternativ: Inlandsflüge mit EgyptAir sind erschwinglich und sparen Zeit. Für Abu Simbel von Assuan aus gibt es einen Kurzflug (45 min) oder den frühmorgendlichen Konvoi-Bus.'
+        },
+        {
+          headline: 'Nilkreuzfahrt Luxor–Assuan',
+          body: 'Zwischen Luxor und Assuan ist eine 3–7-tägige Nilkreuzfahrt wunderbar. Das Schiff ist gleichzeitig Hotel, Transportmittel und Aussichtsplattform.\n\nAbends ankern, tagsüber Tempel besichtigen. Buchung über einen deutschen Reiseveranstalter ist oft am bequemsten — alles inklusive, keine Überraschungen.'
+        },
+        {
+          headline: 'Felucca auf dem Nil',
+          body: 'Eine Felucca (traditionelles Segelboot) beim Sonnenuntergang auf dem Nil zu mieten ist unvergesslich — besonders in Assuan.\n\nPreis immer vorher vereinbaren: ca. 150–300 EGP für eine Stunde für eine kleine Gruppe. Auf Nummer sicher: Bootseigentümer, den das Hotel empfiehlt, bevorzugen.'
+        },
+        {
+          headline: 'In Luxor und Assuan unterwegs',
+          body: 'Luxor: Pferdekutsche (Hantour) auf dem Westufer ist charmant, aber Preis vorher festlegen. Fahrräder leihen ist sehr beliebt und einfach möglich.\n\nAssuan: Klein, übersichtlich, vieles zu Fuß erreichbar. Taxis und Tuk-Tuks ergänzen. Deutlich entspannter als Kairo.'
+        }
+      ]
+    },
+
+    {
+      id: 'kleidung',
+      emoji: '👗',
+      label: 'Kleidung\n& Wetter',
+      cards: [
+        {
+          headline: 'März und April: ideal — aber vorbereitet sein',
+          body: 'Kairo im März: 18–27°C, angenehm.\nLuxor und Assuan: 25–35°C, teils wärmer.\nNachts in der Wüste: 15–18°C, kann kühl werden.\n\nEine leichte Jacke oder ein Schal für den Abend ist ratsam — auch für stark klimatisierte Restaurants und Züge.'
+        },
+        {
+          headline: 'Kleidung für Frauen — Tempel und Moscheen',
+          body: 'In Moscheen: Schultern und Knie bedeckt, Kopftuch mitnehmen (wird oft gestellt, aber eigenes ist hygienischer).\n\nIn Tempeln: formell kein Dresscode, aber Schultern und Knie bedeckt zu haben zeigt Respekt und schützt vor Sonne. Leichte, lange Leinenhosen und luftige Blusen sind ideal.'
+        },
+        {
+          headline: 'Kleidung für Männer',
+          body: 'Kurze Hosen sind in Touristenbereichen und am Hotelpool völlig in Ordnung. Für Moscheebesuche lange Hosen mitbringen.\n\nEin Hemd statt T-Shirt wirkt respektvoller und wird von Einheimischen durchaus wahrgenommen. Leinen ist im Sommer und Vorfrühling die beste Wahl.'
+        },
+        {
+          headline: 'Sonnenschutz — kein Spaß!',
+          body: 'Die ägyptische Sonne ist selbst im März stärker als die deutsche Hochsommersonne. Unterschätzen Sie sie bitte nicht.\n\nSonnencreme LSF 50+ für Gesicht und Arme. Sonnenbrille mit UV-Schutz — Pflicht! Ein breiter Sonnenhut. Zwischen 11 und 15 Uhr intensive Besichtigungen draußen möglichst vermeiden.'
+        },
+        {
+          headline: 'Das richtige Schuhwerk',
+          body: 'Sie werden auf unebenen Steinböden, in Sand und durch enge Tempelgänge laufen — viel mehr als im Urlaub zuhause.\n\nBequeme, gut eingelaufene Wanderschuhe oder feste Ledersandalen mit Halt. Keine neuen, noch nicht eingelaufenen Schuhe! Für Moscheen leicht ausziehbare Schuhe sehr praktisch.'
+        },
+        {
+          headline: 'Abu Simbel: morgens kalt!',
+          body: 'Der Touristen-Konvoi fährt oft um 4–5 Uhr morgens ab — zu dieser Zeit ist es in der Wüste noch empfindlich kalt.\n\nEine warme Jacke mitnehmen, die Sie nach Ankunft vor Ort ausziehen können. Tagsüber in Abu Simbel hingegen: heiß, wenig Schatten, unbedingt Wasser und Sonnenschutz dabei.'
+        }
+      ]
+    },
+
+    {
+      id: 'kairo',
+      emoji: '🏙️',
+      label: 'Kairo',
+      cards: [
+        {
+          headline: 'Die Pyramiden von Gizeh',
+          body: 'Kaufen Sie Tickets direkt an der offiziellen Kasse (kein Online-Vorverkauf nötig). Vorsicht vor Männern, die sich als Guides aufdrängen und dann Geld verlangen — offizielle Guides tragen Ausweise.\n\nKamelritt: Preis unbedingt vorher auf den Pfennig genau vereinbaren, sonst gibt es Streit beim Absteigen.'
+        },
+        {
+          headline: 'Pyramiden: Timing ist alles',
+          body: 'Kurz nach der Öffnung um 8 Uhr morgens ist es noch ruhig und nicht heiß — das ist die beste Zeit.\n\nDas Plateau ist riesiger als man denkt. Planen Sie 3–4 Stunden ein. Die Sphinx gehört zum Komplex. Das schönste Gesamtpanoramafoto aller drei Pyramiden machen Sie von der Panoramastraße westlich des Geländes.'
+        },
+        {
+          headline: 'Ägyptisches Museum am Tahrir-Platz',
+          body: 'Das alte Museum beherbergt die Originale der Tutanchamun-Schätze — überwältigend. Es ist groß, warm und etwas chaotisch, aber absolut sehenswert.\n\nEin offizieller Audioguide oder ein lizenzierter Guide für 2 Stunden hilft sehr. Ohne Orientierungshilfe kann man sich in der Fülle verlieren.'
+        },
+        {
+          headline: 'Das neue Grand Egyptian Museum (GEM)',
+          body: 'Das 2023 eröffnete Grand Egyptian Museum in Gizeh ist weltklasse — klimatisiert, modern, spektakulär. Tutanchamuns gesamte Sammlung wird hier vollständig präsentiert.\n\nOnline-Tickets im Voraus empfehlenswert. Planen Sie mindestens einen halben Tag ein, besser einen ganzen.'
+        },
+        {
+          headline: 'Khan el-Khalili Basar',
+          body: 'Der älteste und größte islamische Basar der Welt ist ein Muss. Gehen Sie nachmittags ab 16 Uhr, wenn die Tageshitze nachlässt.\n\nSetzen Sie sich im Café Fishawi auf einen Pfefferminztee — seit 1797 ununterbrochen geöffnet! Feilschen nicht vergessen (siehe Kategorie Basar).'
+        },
+        {
+          headline: 'Islamisches Kairo: Moscheen und Minarette',
+          body: 'Die Al-Azhar-Moschee, die Sultan-Hassan-Moschee und die Zitadelle mit der Muhammad-Ali-Moschee sind beeindruckende islamische Architektur — und größtenteils kostenlos oder sehr günstig.\n\nKairo ist eine 20-Millionen-Stadt mit chaotischem Verkehr. Das ist normal. Lassen Sie sich davon nicht aus der Ruhe bringen.'
+        }
+      ]
+    },
+
+    {
+      id: 'luxor',
+      emoji: '🏛️',
+      label: 'Luxor',
+      cards: [
+        {
+          headline: 'Das Tal der Könige',
+          body: 'Ihr Standardticket erlaubt den Eintritt in 3 Gräber — Tutanchamuns Grab kostet extra, ist aber für die meisten Besucher ein Highlight. Fotografieren im Innern ist verboten (wird kontrolliert).\n\nFrüh morgens gehen! Nachmittags ist es im Tal unerträglich heiß und deutlich voller.'
+        },
+        {
+          headline: 'Karnaktempel — der größte der Welt',
+          body: 'Der Tempelkomplex von Karnak ist atemberaubend groß — planen Sie mindestens 2–3 Stunden ein.\n\nDer Große Hypostyle-Saal mit 134 riesigen Säulen ist ein Erlebnis, das man nicht vergisst. Abends gibt es eine Licht-und-Ton-Show, auch auf Deutsch. Viel Wasser mitnehmen!'
+        },
+        {
+          headline: 'Luxortempel am Abend',
+          body: 'Der Tempel mitten in der Stadt ist abends wunderschön beleuchtet und besonders stimmungsvoll. Schon der Blick von der Uferpromenade (Corniche) lohnt sich kostenlos.\n\nDie restaurierte Sphinxallee verbindet Luxortempel und Karnaktempel auf dem ursprünglichen historischen Weg.'
+        },
+        {
+          headline: 'Heißluftballon über Luxor',
+          body: 'Start kurz vor Sonnenaufgang (ca. 5:30 Uhr), Flug ca. 45–60 Minuten über das Tal der Könige. Einer der spektakulärsten Momente dieser Reise.\n\nPreis: ca. 80–120 US-Dollar. Buchen Sie über Ihr Hotel oder einen empfohlenen Anbieter — Sicherheitsstandards variieren, fragen Sie nach zertifizierten Unternehmen.'
+        },
+        {
+          headline: 'Medinet Habu und Ramesseum',
+          body: 'Diese Tempel sind weniger bekannt, kaum überlaufen und genauso beeindruckend. Medinet Habu (Tempel Ramses' III.) hat erstaunlich gut erhaltene Originalfarben.\n\nIdeal für alle, die etwas abseits des Hauptstroms erkunden möchten — und oft ohne Gedränge.'
+        },
+        {
+          headline: 'Westbank und Ostbank',
+          body: 'Der Nil teilt Luxor in zwei Welten.\nOstbank: Stadt, Hotels, Karnaktempel, Luxortempel.\nWestbank: Tal der Könige, Hatschepsut-Tempel, Medinet Habu.\n\nEine Fähre überquert den Nil für wenige Pfund. Oder mieten Sie für einen Tag ein Auto mit Fahrer (ca. 400–600 EGP) — die entspannteste Option.'
+        }
+      ]
+    },
+
+    {
+      id: 'assuan',
+      emoji: '⛵',
+      label: 'Assuan',
+      cards: [
+        {
+          headline: 'Philae-Tempel: Isis auf ihrer Insel',
+          body: 'Der Isis-Tempel auf der Insel Philae ist einer der romantischsten Orte Ägyptens. Nur per Boot erreichbar — die kurze Fahrt ist oft im Eintrittspreis inbegriffen.\n\nAbends gibt es eine Licht-und-Ton-Show. Der Tempel wurde in den 1970ern vor dem Nassersee gerettet und Stein für Stein auf eine höhere Insel versetzt — eine Meisterleistung.'
+        },
+        {
+          headline: 'Felucca-Fahrt und Nubisches Dorf',
+          body: 'Eine Segelfahrt mit einer Felucca rund um die Elefantineninsel mit Besuch eines nubischen Dorfes ist ein Höhepunkt.\n\nDie Nubier sind bekannt für ihre herzliche Gastfreundschaft, bunten Häuser und besondere Küche. Henna-Tatoos und gezähmte Krokodile als Haustiere inklusive!'
+        },
+        {
+          headline: 'Assuan-Hochdamm',
+          body: 'Der 1970 fertiggestellte Hochdamm ist ein beeindruckendes Bauwerk und hat die Geschichte Ägyptens verändert — und den jährlichen Nilschlamm als natürlichen Dünger beendet.\n\nDie Besichtigung ist kurz und lohnend. Kombinieren Sie ihn mit dem Obelisken-Steinbruch nebenan.'
+        },
+        {
+          headline: 'Unvollendeter Obelisk im Steinbruch',
+          body: 'Im Steinbruch am Stadtrand liegt der größte bekannte antike Obelisk — unvollendet, weil mitten in der Arbeit ein Riss entdeckt wurde.\n\nEr zeigt direkt, wie die alten Ägypter solche Monolithen aus dem Fels herausarbeiteten. Faszinierend, kaum überlaufen, Eintritt gering.'
+        },
+        {
+          headline: 'Assuan — die entspannte Stadt',
+          body: 'Assuan ist ruhiger und übersichtlicher als Kairo oder Luxor. Die Corniche entlang des Nils ist ideal für einen Abendspaziergang mit Blick auf den Sonnenuntergang.\n\nDie nubische Küche mit Tamarinde, Hibiskus und aromatischen Gewürzen ist besonders lecker. Hibiskus-Tee (Karkade) warm oder kalt trinken — unbedingt!'
+        }
+      ]
+    },
+
+    {
+      id: 'abusimbel',
+      emoji: '🌅',
+      label: 'Abu\nSimbel',
+      cards: [
+        {
+          headline: 'Was Sie erwartet',
+          body: 'Die zwei Felstempel Ramses' II. (erbaut ca. 1264 v. Chr.) sind eines der beeindruckendsten Bauwerke der Menschheit. Vier sitzende Kolossal-Statuen (über 20 Meter hoch) bewachen den Eingang.\n\nIm Inneren sind die Wandmalereien nach über 3.200 Jahren noch leuchtend bunt. Ein UNESCO-Weltkulturerbe der Sonderklasse.'
+        },
+        {
+          headline: 'Anreise: Konvoi-Bus von Assuan',
+          body: 'Der offizielle Touristenkonvoi fährt täglich sehr früh von Assuan ab — meist um 4:00 oder 5:00 Uhr morgens (Abfahrtszeit saisonal prüfen). Ca. 3 Stunden Fahrt durch die Wüste.\n\nAnkunft früh morgens, 2–3 Stunden für die Tempel einplanen, Rückfahrt mit dem Konvoi. Sehr früh aufstehen — aber es lohnt sich.'
+        },
+        {
+          headline: 'Anreise: Kurzflug',
+          body: 'EgyptAir bietet kurze Flüge von Assuan nach Abu Simbel an (ca. 45 Minuten, mehrmals wöchentlich).\n\nTeurer als der Bus, aber deutlich komfortabler. Besonders empfehlenswert, wenn die Frühaufsteh-Konvoifahrt zu beschwerlich erscheint. Tickets früh buchen, da die Maschinen klein sind.'
+        },
+        {
+          headline: 'Die Rettung der Tempel — eine Weltaktion',
+          body: 'In den 1960ern drohte der Nassersee die Tempel zu überfluten. Die UNESCO organisierte eine beispiellose internationale Rettungsaktion:\n\nDie Tempel wurden in über 20.000 Steinblöcke zersägt und 65 Meter höher wieder originalgetreu aufgebaut. Ein Film im Besucherzentrum erklärt dies eindrucksvoll.'
+        },
+        {
+          headline: 'Das Sonnenwunder',
+          body: 'Zweimal im Jahr — am 21. Februar und 21. Oktober — scheint die aufgehende Sonne tief durch den gesamten Tempel bis ins Allerheiligste und beleuchtet die Statuen von Ramses II.\n\nNur Ptah, der Totengott, bleibt im Dunkeln. Dieses astronomische Wunder wurde von den Erbauern so geplant. Zu diesen Terminen kommen Tausende.'
+        },
+        {
+          headline: 'Praktisches vor Ort',
+          body: 'In Abu Simbel gibt es wenig: ein Hotel, einige kleine Cafés, den Tempel und den Nassersee.\n\nBringen Sie ausreichend Wasser, Snacks, Sonnencreme und einen Hut mit. Die Hitze ist stark, auch morgens. Nutzen Sie die früheren Stunden (8–10 Uhr) für die Besichtigung, bevor die Sonne hochsteht.'
+        }
+      ]
+    },
+
+    {
+      id: 'arabisch',
+      emoji: '🗣️',
+      label: 'Arabisch\nfür Notfälle',
+      cards: [
+        {
+          headline: 'Begrüßung und die wichtigsten Wörter',
+          body: '„As-salamu alaykum" — Hallo / Guten Tag\n(Aussprache: Ass-sa-LA-mu a-LAY-kum)\nAntwort: „Wa alaykum as-salam"\n\n„Shukran" — Danke (SCHUK-ran)\n„Min fadlak" — Bitte (min FAD-lak)\n\nDiese drei Wörter mit einem Lächeln öffnen jedes Herz.'
+        },
+        {
+          headline: 'Ja, Nein und ich verstehe nicht',
+          body: '„Aywa" — Ja (EI-wa)\n„La" — Nein (la)\n„La shukran" — Nein danke (la SCHUK-ran)\n„Misch fahim" — Ich verstehe nicht (misch FA-him)\n\n„Bitkallem engelizi?" — Sprechen Sie Englisch?\n(bit-KAL-lem en-ge-LI-si?)'
+        },
+        {
+          headline: 'Zahlen und Feilschen',
+          body: '1 = wahid (WA-hid)\n2 = itnayn (it-NAIN)\n5 = khamsa (CHAM-sa)\n10 = ashara (A-scha-ra)\n50 = khamsin (CHAM-sin)\n100 = miyya (MIJ-ja)\n\n„Bikam?" = Wie viel? (bi-KAM?)\n„Ghali awi!" = Das ist sehr teuer! (GHA-li a-WI!)'
+        },
+        {
+          headline: 'Im Notfall',
+          body: '„Isaaedni!" — Hilf mir! (is-AA-id-ni!)\n„Eih el-mustashfa?" — Wo ist das Krankenhaus?\n(ein el-mus-tasch-FA?)\n„Shurta!" — Polizei! (SCHUR-ta)\n„Hakim!" — Arzt! (HA-kim)\n\nDiese Wörter hoffentlich nie brauchen — aber gut, sie zu kennen.'
+        },
+        {
+          headline: 'Im Restaurant',
+          body: '„El-hesab, min fadlak" — Die Rechnung bitte\n(el-HE-sab, min FAD-lak)\n„Bila talg" — Ohne Eis (BI-la talg)\n„Bila lahma" — Ohne Fleisch (vegetarisch)\n„Laziz awi!" — Das ist sehr lecker!\n(la-SIS a-WI!)\n\nEin herzliches „Laziz awi!" macht jeden Wirt glücklich.'
+        },
+        {
+          headline: 'Im Taxi unterwegs',
+          body: '„Rouh" — Fahren Sie los (ruh)\n„Oaf" — Anhalten bitte (oaf)\n„Shimal" — Links (schi-MAL)\n„Yimin" — Rechts (YI-min)\n„Ala tul" — Geradeaus (a-la TUL)\n\nTipp: Die Zieladresse auf Arabisch aufgeschrieben dabei haben — zeigen ist einfacher als sprechen.'
+        }
+      ]
+    },
+
+    {
+      id: 'gesundheit',
+      emoji: '🏥',
+      label: 'Gesundheit',
+      cards: [
+        {
+          headline: 'Reiseapotheke — das Grundset',
+          body: 'Imodium oder Loperamid (Durchfall)\nBuscopan (Magenkrämpfe)\nKohletabletten\nParacetamol (kein Aspirin bei Hitze!)\nElektrolytpulver z.B. Elotrans\nBetaisodona + Pflaster\nSonnencreme LSF 50+\nMückenschutzmittel (in Assuan nachts nützlich)\n\nAlles aus Deutschland mitbringen — einfacher so.'
+        },
+        {
+          headline: 'Hitze und Dehydration',
+          body: 'Dehydration ist die häufigste Gefahr für Reisende in Ägypten. Trinken Sie täglich mindestens 2–3 Liter Flaschenwasser, auch wenn Sie keinen Durst spüren.\n\nSchwindel, Kopfschmerzen oder plötzliche Müdigkeit? Sofort in den Schatten, hinsetzen und viel Wasser mit Elektrolyten trinken. Im Zweifel eine Pause einlegen — Tempel laufen nicht weg.'
+        },
+        {
+          headline: 'Magenprobleme — was tun?',
+          body: 'Urlaubsdurchfall ist häufig, meist mild und geht nach 1–2 Tagen vorbei.\n\nViel Flaschenwasser (mit Elektrolytpulver), leichte Kost: Tee, Zwieback, Bananen, Reis. Bei Blut im Stuhl, sehr hohem Fieber oder starken anhaltenden Krämpfen bitte einen Arzt aufsuchen. Gute Privatkliniken gibt es in Kairo, Luxor und Assuan.'
+        },
+        {
+          headline: 'Auslandskrankenversicherung — Pflicht!',
+          body: 'Eine Auslandskrankenversicherung mit Rücktransport-Option ist für eine Ägypten-Reise unbedingt notwendig.\n\nADAC, HanseMerkur, Allianz und andere bieten günstige Policen an — oft schon ab 10–15 Euro pro Person für die Reisedauer. Bitte sicherstellen, dass Ägypten abgedeckt ist und ein Rücktransport nach Deutschland enthalten ist.'
+        },
+        {
+          headline: 'Impfungen — was empfohlen wird',
+          body: 'Für Ägypten sind keine Pflichtimpfungen vorgeschrieben.\n\nVom Tropeninstitut empfohlen:\n• Hepatitis A (sehr ratsam)\n• Typhus (bei Essen abseits von Touristenrestaurants)\n• Tetanus — aktuell halten\n\nMalaria ist in den touristischen Hauptgebieten (Kairo, Luxor, Assuan) kein relevantes Risiko. Am besten 6–8 Wochen vor Reiseantritt zum Hausarzt.'
+        },
+        {
+          headline: 'Apotheken vor Ort',
+          body: 'Ägyptische Apotheken (erkennbar am grünen Kreuz) sind gut bestückt und die Apotheker oft hilfsbereit — viele sprechen Englisch.\n\nViele europäische Medikamente sind erhältlich, oft günstiger und ohne Rezept. Trotzdem: Nehmen Sie Ihre wichtigsten persönlichen Medikamente aus Deutschland in ausreichender Menge mit — Zeitdruck oder Sprachbarriere kann im Notfall stressig sein.'
+        }
+      ]
+    }
+
+  ]; // Ende CATEGORIES
+
+
+  // ════════════════════════════════════════════════════════════
+  //  APP-ZUSTAND
+  // ════════════════════════════════════════════════════════════
+
+  const state = {
+    currentView: 'home',
+    currentCategory: null,
+    currentCard: 0,
+    animating: false
+  };
+
+  // ════════════════════════════════════════════════════════════
+  //  DOM-REFERENZEN
+  // ════════════════════════════════════════════════════════════
+
+  const viewHome       = document.getElementById('view-home');
+  const viewDetail     = document.getElementById('view-detail');
+  const categoryGrid   = document.getElementById('category-grid');
+  const detailTitle    = document.getElementById('detail-title');
+  const card           = document.getElementById('card');
+  const cardNumber     = document.getElementById('card-number');
+  const cardHeadline   = document.getElementById('card-headline');
+  const cardBody       = document.getElementById('card-body');
+  const progressLabel  = document.getElementById('progress-label');
+  const btnBack        = document.getElementById('btn-back');
+  const btnPrev        = document.getElementById('btn-prev');
+  const btnNext        = document.getElementById('btn-next');
+  const cardContainer  = document.getElementById('card-container');
+
+  // ════════════════════════════════════════════════════════════
+  //  VIEWS WECHSELN
+  // ════════════════════════════════════════════════════════════
+
+  function switchView(target) {
+    if (target === 'home') {
+      viewDetail.classList.remove('active');
+      viewHome.classList.add('active');
+      state.currentView = 'home';
+    } else {
+      viewHome.classList.remove('active');
+      viewDetail.classList.add('active');
+      state.currentView = 'detail';
+    }
+  }
+
+  // ════════════════════════════════════════════════════════════
+  //  STARTSEITE AUFBAUEN
+  // ════════════════════════════════════════════════════════════
+
+  function renderHome() {
+    categoryGrid.innerHTML = '';
+    CATEGORIES.forEach(function(cat, idx) {
+      const tile = document.createElement('div');
+      tile.className = 'category-tile';
+      tile.setAttribute('role', 'listitem');
+      tile.setAttribute('tabindex', '0');
+      tile.setAttribute('aria-label', cat.label.replace('\n', ' '));
+
+      const emojiEl = document.createElement('span');
+      emojiEl.className = 'tile-emoji';
+      emojiEl.setAttribute('aria-hidden', 'true');
+      emojiEl.textContent = cat.emoji;
+
+      const labelEl = document.createElement('span');
+      labelEl.className = 'tile-label';
+      labelEl.textContent = cat.label.replace('\n', '\n');
+      labelEl.style.whiteSpace = 'pre-line';
+
+      tile.appendChild(emojiEl);
+      tile.appendChild(labelEl);
+
+      tile.addEventListener('click', function() { navigateTo(idx); });
+      tile.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigateTo(idx); }
+      });
+
+      categoryGrid.appendChild(tile);
+    });
+  }
+
+  // ════════════════════════════════════════════════════════════
+  //  KARTEIKARTE ANZEIGEN
+  // ════════════════════════════════════════════════════════════
+
+  function renderCard() {
+    const cat  = CATEGORIES[state.currentCategory];
+    const tip  = cat.cards[state.currentCard];
+    const total = cat.cards.length;
+    const idx   = state.currentCard;
+
+    detailTitle.textContent  = cat.emoji + ' ' + cat.label.replace('\n', ' ');
+    cardNumber.textContent   = idx + 1;
+    cardHeadline.textContent = tip.headline;
+    cardBody.textContent     = tip.body;
+    progressLabel.textContent = 'Tipp ' + (idx + 1) + ' von ' + total;
+
+    btnPrev.disabled = (idx === 0);
+    btnNext.disabled = (idx === total - 1);
+  }
+
+  // ════════════════════════════════════════════════════════════
+  //  NAVIGATION
+  // ════════════════════════════════════════════════════════════
+
+  function navigateTo(categoryIdx) {
+    state.currentCategory = categoryIdx;
+    state.currentCard     = 0;
+    switchView('detail');
+    renderCard();
+    // Karte sauber einblenden
+    card.style.opacity = '1';
+    card.style.transform = 'none';
+    card.style.transition = '';
+    btnBack.focus();
+  }
+
+  function navigateHome() {
+    switchView('home');
+    state.currentCategory = null;
+    state.currentCard     = 0;
+  }
+
+  // ════════════════════════════════════════════════════════════
+  //  KARTE BLÄTTERN MIT ANIMATION
+  // ════════════════════════════════════════════════════════════
+
+  function changeCard(direction) {
+    if (state.animating) return;
+    const cat = CATEGORIES[state.currentCategory];
+    const newIdx = state.currentCard + direction;
+    if (newIdx < 0 || newIdx >= cat.cards.length) return;
+
+    state.animating = true;
+
+    // Phase 1: rausschieben
+    const outClass = direction > 0 ? 'slide-out-left' : 'slide-out-right';
+    card.classList.add(outClass);
+
+    setTimeout(function() {
+      // Phase 2: Inhalt aktualisieren, während Karte unsichtbar
+      state.currentCard = newIdx;
+      renderCard();
+
+      // Phase 3: von der anderen Seite einblenden (ohne Transition)
+      card.classList.remove(outClass);
+      const inClass = direction > 0 ? 'slide-in-right' : 'slide-in-left';
+      card.classList.add(inClass);
+
+      // Phase 4: Transition anstossen mit doppeltem rAF
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          card.classList.remove(inClass);
+          // Freigabe nach Transition
+          setTimeout(function() {
+            state.animating = false;
+          }, 240);
+        });
+      });
+    }, 220);
+  }
+
+  function nextCard() { changeCard(1); }
+  function prevCard() { changeCard(-1); }
+
+  // ════════════════════════════════════════════════════════════
+  //  TOUCH / WISCHEN
+  // ════════════════════════════════════════════════════════════
+
+  let touchStartX = null;
+
+  cardContainer.addEventListener('touchstart', function(e) {
+    touchStartX = e.touches[0].clientX;
+  }, { passive: true });
+
+  cardContainer.addEventListener('touchend', function(e) {
+    if (touchStartX === null) return;
+    const deltaX = e.changedTouches[0].clientX - touchStartX;
+    touchStartX = null;
+    if (Math.abs(deltaX) > 50) {
+      if (deltaX < 0) nextCard();
+      else prevCard();
+    }
+  }, { passive: true });
+
+  // ════════════════════════════════════════════════════════════
+  //  EVENT-BINDING
+  // ════════════════════════════════════════════════════════════
+
+  btnBack.addEventListener('click', navigateHome);
+  btnPrev.addEventListener('click', prevCard);
+  btnNext.addEventListener('click', nextCard);
+
+  // Tastatur-Navigation in der Detailansicht
+  document.addEventListener('keydown', function(e) {
+    if (state.currentView !== 'detail') return;
+    if (e.key === 'ArrowRight') nextCard();
+    if (e.key === 'ArrowLeft')  prevCard();
+    if (e.key === 'Escape')     navigateHome();
+  });
+
+  // ════════════════════════════════════════════════════════════
+  //  START
+  // ════════════════════════════════════════════════════════════
+
+  renderHome();
+
+  </script>
+</body>
+</html>
